@@ -9,12 +9,12 @@ resource "aws_subnet" "public" {
   cidr_block              = "${cidrsubnet(var.vpc_cidr, var.newbits, var.az_number[data.aws_availability_zone.az.*.name_suffix[count.index]] + var.public_netnum_offset)}"
   availability_zone       = "${var.availability_zones[count.index]}"
   map_public_ip_on_launch = true
-  tags                    = "${merge(map("Name", "${var.name}-${var.env}-sn-public-${data.aws_availability_zone.az.*.name_suffix[count.index]}"), var.tags)}"
+  tags                    = "${merge(map("Name", "${var.name}-sn-public-${data.aws_availability_zone.az.*.name_suffix[count.index]}"), var.tags)}"
 }
 
 resource "aws_route_table" "public" {
   vpc_id = "${var.vpc_id}"
-  tags   = "${merge(map("Name", "${var.name}-${var.env}-rt-public"), var.tags)}"
+  tags   = "${merge(map("Name", "${var.name}-rt-public"), var.tags)}"
 }
 
 resource "aws_route" "internet_route" {
@@ -60,14 +60,14 @@ resource "aws_subnet" "private" {
   cidr_block              = "${cidrsubnet(var.vpc_cidr, var.newbits, var.az_number[data.aws_availability_zone.az.*.name_suffix[count.index]] + var.private_netnum_offset)}"
   availability_zone       = "${var.availability_zones[count.index]}"
   map_public_ip_on_launch = false
-  tags                    = "${merge(map("Name", "${var.name}-${var.env}-sn-private-${data.aws_availability_zone.az.*.name_suffix[count.index]}"), var.tags)}"
+  tags                    = "${merge(map("Name", "${var.name}-sn-private-${data.aws_availability_zone.az.*.name_suffix[count.index]}"), var.tags)}"
   depends_on              = ["aws_nat_gateway.nat_gw"]
 }
 
 resource "aws_route_table" "private" {
   count  = "${length(var.availability_zones)}"
   vpc_id = "${var.vpc_id}"
-  tags   = "${merge(map("Name", "${var.name}-${var.env}-rt-private-${data.aws_availability_zone.az.*.name_suffix[count.index]}"), var.tags)}"
+  tags   = "${merge(map("Name", "${var.name}-rt-private-${data.aws_availability_zone.az.*.name_suffix[count.index]}"), var.tags)}"
 }
 
 resource "aws_route" "nat_route" {
@@ -99,7 +99,7 @@ resource "aws_security_group" "default" {
   name        = "internal"
   description = "Default security group that allows inbound and outbound traffic from all instances in the VPC"
   vpc_id      = "${var.vpc_id}"
-  tags        = "${merge(map("Name", "${var.name}-${var.env}-sg-default"), var.tags)}"
+  tags        = "${merge(map("Name", "${var.name}-sg-default"), var.tags)}"
 }
 
 resource "aws_security_group_rule" "internal_ingress" {
@@ -132,7 +132,7 @@ resource "aws_security_group" "nat" {
   name        = "nat"
   description = "security group that allows all inbound and outbound traffic. should only be applied to instances in a private subnet"
   vpc_id      = "${var.vpc_id}"
-  tags        = "${merge(map("Name", "${var.name}-${var.env}-sg-nat"), var.tags)}"
+  tags        = "${merge(map("Name", "${var.name}-sg-nat"), var.tags)}"
   depends_on  = ["aws_nat_gateway.nat_gw"]
 }
 

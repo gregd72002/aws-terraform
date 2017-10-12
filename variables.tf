@@ -1,5 +1,5 @@
 variable "name" {
-  default = "example.com"
+  default = "qikserve"
 }
 
 variable "region" {
@@ -7,7 +7,7 @@ variable "region" {
 }
 
 variable "azs" {
-  default = ["us-east-1a", "us-east-1c", "us-east-1d"]
+  default = ["eu-west-1a"]
   type    = "list"
 }
 
